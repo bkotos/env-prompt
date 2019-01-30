@@ -2,12 +2,12 @@
 A dependency-free utility that prompts you for your project's environment variables.
 
 ## How does it work?
-On `npm install`, env-prompt reads from two environment files:
- - a distributed version (default: `.env.dist`)
- - a local version (default: `.env`)
+On `npm install`, env-prompt reads environment variables from files in your project:
+ - a **distributed** file (default: **`.env.dist`**)
+ - a git ignored **local** file (default: **`.env`**)
 
-Envprompt will diff these two files, prompting you for any values that exist in the distributed version
- but not your local version.
+Envprompt will diff these two files, prompting you for any values that exist in your distributed file but not in your
+ local file.  Your newly input values will be written to your local environment file.
 
 ## Getting started
 1) Install env-prompt:
