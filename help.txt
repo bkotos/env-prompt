@@ -1,0 +1,14 @@
+npm start
+    Compile in development mode and re-compile as changes are made.
+
+npm run build:dist
+    Compile in production mode.
+
+npm run test:functional
+    Run functional tests against the compiled env-prompt application.
+
+npm run release
+    Publish a new release.
+
+npm run help
+    Show list of commands and a description for each command.

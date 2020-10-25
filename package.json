@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack --mode=development --watch",
-    "build-dist": "webpack --mode=production",
+    "build:dist": "webpack --mode=production",
     "test:functional": "npx jest ./test/functional/test.ts",
-    "release": "ts-node bin/release.ts"
+    "release": "ts-node bin/release.ts",
+    "help": "cat help.txt"
   },
   "repository": {
     "type": "git",

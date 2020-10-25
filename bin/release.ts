@@ -39,7 +39,7 @@ const replacePackageJsonVersion = (fileContents: string, version: string): strin
     fileContents.replace(/"version": ".*"/, `"version": "${version}"`)
 
 export const spawnWithForwardedStdIo = async (command: string, args: string[], options: Object): Promise<void> => {
-    console.log(`$ ${command} ${args.join(' ')}`)
+    console.log(`> ${command} ${args.join(' ')}`)
     return new Promise<void>((resolve) =>
         spawn(command, args, {stdio: 'inherit', ...options})
             .on('close', () => {
@@ -53,7 +53,7 @@ const gitStatus = async (cwd: string) =>
     await spawnWithForwardedStdIo('git', ['status'], { cwd })
 
 const buildDist = async (cwd: string) =>
-    await spawnWithForwardedStdIo('npm', ['run', 'build-dist'], { cwd })
+    await spawnWithForwardedStdIo('npm', ['run', 'build:dist'], { cwd })
 
 const npmInstall = async (cwd: string) =>
     await spawnWithForwardedStdIo('npm', ['install'], { cwd })
