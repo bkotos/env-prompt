@@ -33,16 +33,19 @@ const isVersionChanged = (currentVersion: string, nextVersion: string) => {
 
 const readPackageJson = (filePath: string): string => fs.readFileSync(filePath).toString()
 
-const writePackageJson = (filePath: string, packageJson: Object) => fs.writeFileSync(filePath, packageJson)
+const writePackageJson = (filePath: string, packageJson: string) => fs.writeFileSync(filePath, packageJson)
 
 const replacePackageJsonVersion = (fileContents: string, version: string): string =>
     fileContents.replace(/"version": ".*"/, `"version": "${version}"`)
 
 export const spawnWithForwardedStdIo = async (command: string, args: string[], options: Object): Promise<void> => {
-    console.log(`${command} ${args.join(' ')}`)
+    console.log(`$ ${command} ${args.join(' ')}`)
     return new Promise<void>((resolve) =>
         spawn(command, args, {stdio: 'inherit', ...options})
-            .on('close', () => resolve())
+            .on('close', () => {
+                console.log('')
+                resolve()
+            })
     )
 }
 
@@ -55,8 +58,8 @@ const buildDist = async (cwd: string) =>
 const npmInstall = async (cwd: string) =>
     await spawnWithForwardedStdIo('npm', ['install'], { cwd })
 
-const rmRf = async (cwd: string, path: string) =>
-    await spawnWithForwardedStdIo('rm', ['-rm', path], { cwd })
+const removeFilesRecursively = async (cwd: string, path: string) =>
+    await spawnWithForwardedStdIo('rm', ['-rf', path], { cwd })
 
 export const gitListBranches = async (cwd: string) =>
     await spawnWithForwardedStdIo('git', ['branch', '-v'], { cwd })
@@ -131,7 +134,7 @@ const main = async () => {
     writePackageJson(packageJsonFilePath, packageJsonWithNextVersion)
 
     await npmInstall(projectRoot)
-    await rmRf(projectRoot, distDirectoryPath)
+    await removeFilesRecursively(projectRoot, distDirectoryPath)
     await buildDist(projectRoot)
 
     await gitAdd(projectRoot, packageJsonFilePath)
