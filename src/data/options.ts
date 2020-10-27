@@ -1,8 +1,9 @@
-import { ArgumentName, OptionNameByArgumentName, Options } from "@/model/options";
+import {ArgumentName, Format, OptionNameByArgumentName, Options} from "@/model/options";
 
 export const defaultOptions: Options = {
     distFile: '.env.dist',
-    localFile: '.env'
+    localFile: '.env',
+    format: Format.env
 }
 
 namespace ArgumentNames {

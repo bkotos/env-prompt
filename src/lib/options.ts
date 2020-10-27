@@ -39,7 +39,7 @@ export const getOptionsFromRawArguments = (rawArguments: RawArgument[]): Options
         )
         .forEach(([argumentName, argumentValue]: ParsedArgument) => {
             const optionName = optionNameByArgumentName[argumentName]
-            options[optionName] = argumentValue as string
+            options[optionName as any] = argumentValue as string
         })
 
     return options

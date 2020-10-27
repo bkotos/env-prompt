@@ -5,9 +5,12 @@ export type RawArgument = string
 export type ParsedArgument = [ArgumentName, ArgumentValue]
 export type ParsedArgumentMap = Record<ArgumentName, ArgumentValue>
 
+export enum Format { env }
+
 export interface Options {
     distFile: string
     localFile: string
+    format: Format
 }
 type OptionName = keyof Options
 type OptionValue = Options[OptionName]
