@@ -4,7 +4,7 @@ hello = world
 hello  =  "world"
 `
 
-enum Token {
+export enum Token {
     identifier,
     assignmentOperator,
     value,
@@ -16,9 +16,9 @@ interface Statement {
     lexemes: Lexeme[]
 }
 
-type LexemeValueIndicesByIdentifier = Record<string, number>
+export type LexemeValueIndicesByIdentifier = Record<string, number>
 
-interface IndexedLexemes {
+export interface IndexedLexemes {
     lexemes: Lexeme[]
     index: LexemeValueIndicesByIdentifier
 }
@@ -45,15 +45,13 @@ const indexLexemes = (lexemes: Lexeme[]): LexemeValueIndicesByIdentifier => {
     return index
 }
 
-interface Lexeme {
+export interface Lexeme {
     value: string
     token: Token
 }
 
-export namespace Lexical {
+namespace Lexical {
     export const analyze = (content: string): Lexeme[] => {
-        console.log(content)
-        console.log('\n-----')
         const lexemeList: Lexeme[] = []
 
         let isEnd
@@ -145,7 +143,7 @@ export namespace Lexical {
 
             if (isBeginningOfValue) {
                 isValueStarted = true
-                const isQuote = /^["']^/.test(char)
+                const isQuote = /^["']$/.test(char)
                 if (isQuote) {
                     isQuotedValue = true
                     outerQuoteChar = char
@@ -153,19 +151,22 @@ export namespace Lexical {
                 }
             }
 
-            const isEndingOuterQuote = isQuotedValue && char === outerQuoteChar
-            const isComment = char === '#' && !isQuotedValue
-            const isQuotedLineBreak = isQuotedValue && isLineBreak(string, i)
-            if (isQuotedValue) {
-                if (isEndingOuterQuote) {
+            if (isValueStarted) {
+                const isEndingOuterQuote = isQuotedValue && char === outerQuoteChar
+                const isComment = char === '#' && !isQuotedValue
+                const isNonQuotedLineBreak = !isQuotedValue && isLineBreak(string, i)
+                if (isQuotedValue) {
+                    if (isEndingOuterQuote) {
+                        stop(true)
+                    } else {
+                        return char
+                    }
+                } else if (isComment || isNonQuotedLineBreak) {
                     stop()
                 } else {
+
                     return char
                 }
-            } else if (isComment || isQuotedLineBreak) {
-                stop()
-            } else {
-                return char
             }
         })
     }
@@ -224,17 +225,23 @@ export namespace Lexical {
         remainingString: string
     }
 
-    type LexicalAnalyst = (char: string, index: number, stop: () => void) => string | void
+    type LexicalAnalyst = (char: string, index: number, stop: (_grabStoppedChar?: boolean) => void) => string | void
 
     const parseToken = (token: Token) => ({
         fromString: (string: string, analyst: LexicalAnalyst): TokenAnalysis => {
             let value = ''
 
-            let i, endIndex = 0, stop = false
+            let i, endIndex = 0, stop = false, grabStoppedChar = false
             for (i = 0; i < string.length; i++) {
                 const char = string[i]
-                const analyzedChar = analyst(char, i, () => stop = true)
+                const analyzedChar = analyst(char, i, (_grabStoppedChar: boolean = false) => {
+                    grabStoppedChar = _grabStoppedChar
+                    stop = true
+                })
                 if (stop) {
+                    if (grabStoppedChar) {
+                        endIndex = i
+                    }
                     break
                 }
                 endIndex = i
